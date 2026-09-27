@@ -68,3 +68,20 @@ LEFT JOIN orders
     ON products.product_id = orders.product_id
 GROUP BY products.product_name
 ORDER BY products.product_name;
+
+SELECT
+    customers.customer_name,
+    orders.order_id,
+    orders.sales
+FROM customers
+FULL OUTER JOIN orders
+    ON customers.customer_id = orders.customer_id;
+
+
+SELECT
+    customers.region,
+    SUM(orders.sales) AS total_sales
+FROM orders
+INNER JOIN customers
+    ON orders.customer_id = customers.customer_id
+GROUP BY customers.region;
