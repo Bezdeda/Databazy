@@ -121,3 +121,14 @@ FROM customers
 INNER JOIN orders
     ON customers.customer_id = orders.customer_id
 GROUP BY customers.region;
+
+-- Uloha 12
+
+SELECT
+    customers.region,
+    COUNT(CASE WHEN orders.sales > 1000 THEN 1 END) AS high_value_count,
+    COUNT(CASE WHEN orders.sales <= 1000 THEN 1 END) AS low_value_count
+FROM customers
+INNER JOIN orders
+    ON customers.customer_id = orders.customer_id
+GROUP BY customers.region;
