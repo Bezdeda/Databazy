@@ -50,3 +50,12 @@ INNER JOIN customers
     ON orders.customer_id = customers.customer_id
 INNER JOIN products
     ON orders.product_id = products.product_id;
+
+SELECT
+    customers.region,
+    COALESCE(SUM(orders.sales), 0) AS total_sales
+FROM customers
+LEFT JOIN orders
+    ON customers.customer_id = orders.customer_id
+GROUP BY customers.region
+ORDER BY customers.region;
