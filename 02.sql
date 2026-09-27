@@ -110,3 +110,14 @@ INNER JOIN orders
     ON customers.customer_id = orders.customer_id
 GROUP BY customers.customer_name
 HAVING SUM(orders.sales) > 2000;
+
+
+SELECT
+    customers.region,
+    SUM(orders.sales) AS total_sales,
+    AVG(orders.discount) AS average_discount,
+    COUNT(orders.order_id) AS order_count
+FROM customers
+INNER JOIN orders
+    ON customers.customer_id = orders.customer_id
+GROUP BY customers.region;
