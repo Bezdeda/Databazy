@@ -101,3 +101,12 @@ FROM products
 INNER JOIN orders
 ON products.product_id = orders.product_id
 GROUP BY products.category;
+
+SELECT
+    customers.customer_name,
+    SUM(orders.sales) AS total_sales
+FROM customers
+INNER JOIN orders
+    ON customers.customer_id = orders.customer_id
+GROUP BY customers.customer_name
+HAVING SUM(orders.sales) > 2000;
