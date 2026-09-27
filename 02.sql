@@ -1,4 +1,4 @@
-
+-- Vytvorenie tabuliek
 CREATE TABLE customers (
     customer_id VARCHAR(20) PRIMARY KEY,
     customer_name VARCHAR(100),
@@ -28,3 +28,14 @@ CREATE TABLE orders (
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+
+-- Uloha 2
+SELECT 
+    orders.order_id,
+    customers.customer_name,
+    orders.sales
+FROM orders
+INNER JOIN customers
+    ON orders.customer_id = customers.customer_id
+WHERE orders.sales > 500
+ORDER BY orders.sales DESC;
