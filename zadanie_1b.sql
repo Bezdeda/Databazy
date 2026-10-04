@@ -43,3 +43,12 @@ WHERE product_category = (
     ORDER BY SUM(total_amount) DESC
     LIMIT 1
 );
+
+SELECT
+    product_name,
+    total_amount,
+    (
+        SELECT AVG(total_amount)
+        FROM flourmills_sales
+    ) AS avg_amount
+FROM flourmills_sales;
