@@ -116,3 +116,25 @@ WHERE EXISTS (
     GROUP BY f2.product_name
     HAVING COUNT(DISTINCT EXTRACT(MONTH FROM f2.sale_date)) > 1
 );
+
+SELECT
+    f1.product_name,
+    f1.product_category,
+    f1.total_amount
+FROM flourmills_sales AS f1
+WHERE EXISTS (
+    SELECT 1
+    FROM flourmills_sales AS f2
+    WHERE f2.product_category = f1.product_category
+      AND f2.total_amount > 200000
+);
+
+SELECT DISTINCT f1.product_category
+FROM flourmills_sales AS f1
+WHERE EXISTS (
+    SELECT 1
+    FROM flourmills_sales AS f2
+    WHERE f2.product_category = f1.product_category
+    GROUP BY f2.product_category
+    HAVING COUNT(DISTINCT f2.region) > 3
+);
