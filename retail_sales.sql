@@ -18,3 +18,24 @@ CREATE TABLE orders (
 
 ALTER DATABASE retail_sales
 SET datestyle = 'ISO, MDY';
+
+
+CREATE OR REPLACE PROCEDURE get_customer_sales(p_customer_id VARCHAR)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    total_sales NUMERIC(12,2);
+BEGIN
+    SELECT COALESCE(SUM(sales), 0)
+    INTO total_sales
+    FROM orders
+    WHERE customer_id = p_customer_id;
+
+    RAISE NOTICE 'Celkovy predaj: %', total_sales;
+END;
+$$;
+
+CALL get_customer_sales('C001');
+
+SELECT COUNT(*)
+FROM orders;
