@@ -121,3 +121,45 @@ calendar AS (
 SELECT sale_date
 FROM calendar
 ORDER BY sale_date ASC;
+
+
+WITH RECURSIVE monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', sale_date) AS month,
+        SUM(quantity_sold * unit_price) AS revenue
+    FROM public.flourmills_sales
+    GROUP BY DATE_TRUNC('month', sale_date)
+),
+ordered_months AS (
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY month) AS rn,
+        month,
+        revenue
+    FROM monthly_revenue
+),
+cumulative_target AS (
+    SELECT
+        rn,
+        month,
+        revenue,
+        revenue AS cumulative_revenue
+    FROM ordered_months
+    WHERE rn = 1
+
+    UNION ALL
+
+    SELECT
+        next.rn,
+        next.month,
+        next.revenue,
+        current.cumulative_revenue + next.revenue
+    FROM cumulative_target AS current
+    JOIN ordered_months AS next
+        ON next.rn = current.rn + 1
+    WHERE current.cumulative_revenue < 500000000
+)
+SELECT
+    month,
+    cumulative_revenue
+FROM cumulative_target
+ORDER BY rn;
