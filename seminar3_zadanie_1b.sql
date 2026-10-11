@@ -27,3 +27,29 @@ SELECT
     total_sales
 FROM category_sales
 ORDER BY total_sales DESC;
+
+
+
+WITH product_sales AS (
+    SELECT
+        product_category,
+        product_name,
+        SUM(quantity_sold * unit_price) AS total_product_sales
+    FROM public.flourmills_sales
+    GROUP BY product_category, product_name
+),
+ranked_products AS (
+    SELECT
+        product_category,
+        product_name,
+        total_product_sales,
+        RANK() OVER (
+            PARTITION BY product_category
+            ORDER BY total_product_sales DESC
+        ) AS category_rank
+    FROM product_sales
+)
+SELECT *
+FROM ranked_products
+WHERE category_rank BETWEEN 1 AND 3
+ORDER BY product_category, category_rank;
