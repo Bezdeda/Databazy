@@ -99,3 +99,25 @@ SELECT
 FROM last_purchase
 WHERE rn = 1
 ORDER BY customer_id ASC;
+
+
+WITH RECURSIVE date_range AS (
+    SELECT
+        MIN(sale_date) AS min_date,
+        MAX(sale_date) AS max_date
+    FROM public.flourmills_sales
+),
+calendar AS (
+    SELECT min_date AS sale_date
+    FROM date_range
+
+    UNION ALL
+
+    SELECT (calendar.sale_date + INTERVAL '1 day')::date
+    FROM calendar
+    CROSS JOIN date_range
+    WHERE calendar.sale_date < date_range.max_date
+)
+SELECT sale_date
+FROM calendar
+ORDER BY sale_date ASC;
