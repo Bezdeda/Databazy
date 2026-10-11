@@ -77,3 +77,25 @@ SELECT
     revenue_percentage
 FROM revenue_share
 ORDER BY revenue DESC;
+
+
+WITH last_purchase AS (
+    SELECT
+        customer_id,
+        product_name,
+        sale_date,
+        quantity_sold * unit_price AS total_sales,
+        ROW_NUMBER() OVER (
+            PARTITION BY customer_id
+            ORDER BY sale_date DESC, sales_id DESC
+        ) AS rn
+    FROM public.flourmills_sales
+)
+SELECT
+    customer_id,
+    product_name,
+    sale_date,
+    total_sales
+FROM last_purchase
+WHERE rn = 1
+ORDER BY customer_id ASC;
