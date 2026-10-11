@@ -53,3 +53,27 @@ SELECT *
 FROM ranked_products
 WHERE category_rank BETWEEN 1 AND 3
 ORDER BY product_category, category_rank;
+
+
+WITH customer_revenue AS (
+    SELECT
+        customer_type,
+        SUM(quantity_sold * unit_price) AS revenue
+    FROM public.flourmills_sales
+    GROUP BY customer_type
+),
+revenue_share AS (
+    SELECT
+        customer_type,
+        revenue,
+        SUM(revenue) OVER () AS total_revenue,
+        ROUND(revenue * 100.0 / SUM(revenue) OVER (), 2) AS revenue_percentage
+    FROM customer_revenue
+)
+SELECT
+    customer_type,
+    revenue,
+    total_revenue,
+    revenue_percentage
+FROM revenue_share
+ORDER BY revenue DESC;
