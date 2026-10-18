@@ -66,3 +66,18 @@ SELECT
     NTILE(4) OVER (ORDER BY total_sales DESC) AS quartile
 FROM predaje
 ORDER BY total_sales DESC;
+
+WITH mesacne_predaje AS (
+    SELECT
+        DATE_TRUNC('month', order_date)::date AS month,
+        SUM(sales) AS monthly_sales
+    FROM orders
+    GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT
+    month,
+    ROUND(monthly_sales::numeric, 2) AS monthly_sales,
+    ROUND(LAG(monthly_sales, 1) OVER (ORDER BY month)::numeric, 2) AS prev_month_sales,
+    ROUND(LEAD(monthly_sales, 1) OVER (ORDER BY month)::numeric, 2) AS next_month_sales
+FROM mesacne_predaje
+ORDER BY month;
