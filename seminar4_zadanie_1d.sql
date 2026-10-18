@@ -126,3 +126,20 @@ SELECT
     ) AS growth_percentage
 FROM porovnanie
 ORDER BY month;
+
+WITH prve_nakupy AS (
+    SELECT
+        customer_id,
+        DATE_TRUNC('month', MIN(order_date)) AS first_month
+    FROM orders
+    GROUP BY customer_id
+)
+SELECT COUNT(*)
+FROM prve_nakupy p
+WHERE p.first_month = '2024-06-01'
+AND EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = p.customer_id
+    AND DATE_TRUNC('month', o.order_date) > p.first_month
+);
