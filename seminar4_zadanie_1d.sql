@@ -81,3 +81,21 @@ SELECT
     ROUND(LEAD(monthly_sales, 1) OVER (ORDER BY month)::numeric, 2) AS next_month_sales
 FROM mesacne_predaje
 ORDER BY month;
+
+WITH objednavky AS (
+    SELECT
+        customer_id,
+        MAX(order_date) OVER (
+            PARTITION BY customer_id
+        ) AS last_order_date,
+        MAX(order_date) OVER () AS latest_order_date
+    FROM orders
+)
+SELECT DISTINCT
+    c.customer_id,
+    c.customer_name,
+    o.last_order_date
+FROM objednavky o
+JOIN customers c ON o.customer_id = c.customer_id
+WHERE o.last_order_date < o.latest_order_date - INTERVAL '90 days'
+ORDER BY o.last_order_date ASC;
