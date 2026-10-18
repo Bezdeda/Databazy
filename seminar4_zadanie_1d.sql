@@ -50,3 +50,19 @@ SELECT
     ) AS profit_dense_rank
 FROM zisky
 ORDER BY region, total_profit DESC;
+
+
+WITH predaje AS (
+    SELECT
+        customers.customer_name,
+        SUM(orders.sales) AS total_sales
+    FROM customers
+    JOIN orders ON customers.customer_id = orders.customer_id
+    GROUP BY customers.customer_id, customers.customer_name
+)
+SELECT
+    customer_name,
+    ROUND(total_sales::numeric, 2) AS total_sales,
+    NTILE(4) OVER (ORDER BY total_sales DESC) AS quartile
+FROM predaje
+ORDER BY total_sales DESC;
