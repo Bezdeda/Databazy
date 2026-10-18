@@ -99,3 +99,30 @@ FROM objednavky o
 JOIN customers c ON o.customer_id = c.customer_id
 WHERE o.last_order_date < o.latest_order_date - INTERVAL '90 days'
 ORDER BY o.last_order_date ASC;
+
+WITH mesacne_predaje AS (
+    SELECT
+        DATE_TRUNC('month', order_date)::date AS month,
+        SUM(sales) AS monthly_sales
+    FROM orders
+    GROUP BY DATE_TRUNC('month', order_date)
+),
+porovnanie AS (
+    SELECT
+        month,
+        monthly_sales,
+        LAG(monthly_sales) OVER (ORDER BY month) AS prev_month_sales
+    FROM mesacne_predaje
+)
+SELECT
+    month,
+    ROUND(monthly_sales::numeric, 2) AS monthly_sales,
+    ROUND(prev_month_sales::numeric, 2) AS prev_month_sales,
+    ROUND((monthly_sales - prev_month_sales)::numeric, 2) AS sales_change,
+    ROUND(
+        (monthly_sales - prev_month_sales) * 100.0 /
+        NULLIF(prev_month_sales, 0),
+        2
+    ) AS growth_percentage
+FROM porovnanie
+ORDER BY month;
