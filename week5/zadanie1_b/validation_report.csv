@@ -1,0 +1,9 @@
+Pravidlo,Pocet_chyb
+invalid_orderid,0
+duplicate_orderid,22
+missing_region,0
+missing_product,0
+invalid_Quantity,5
+invalid_SalesAmount,54
+invalid_Discount,21
+invalid_phone,34
